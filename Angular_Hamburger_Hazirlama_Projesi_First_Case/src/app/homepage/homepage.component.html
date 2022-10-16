@@ -1,0 +1,162 @@
+<div class="container-fluid">
+  <div class="container">
+    <div class="row text-center">
+
+      <div class="col-md-12">
+        <h3 class="text-center text-secondary">
+          {{title}}
+        </h3>
+        <h6 class="text-center text-secondary">
+          Siparişe eklemek istediğiniz ürüne tıklayınız.
+        </h6>
+        <div class="btn-group  m-1" role="group" aria-label="checkbox product toggle button group"
+          *ngFor="let item of productList">
+
+          <div>
+            <div *ngIf="item.isShown">
+              <input id="btn{{item.value}}" type="checkbox" class="btn-check" name="{{item.value}}" autocomplete="off"
+                [(ngModel)]="item.isSelected" value="Value{{item.value}}" (change)="checkValue($event)"
+                (checked)="item.isSelected">
+              <label class="btn btn-outline-dark" for="btn{{item.value}}">{{item.value}}</label>
+            </div>
+
+            <div id="kofteTavuk">
+              <div *ngIf="item.value=='Tavuk'">
+
+                <input id="btnTavuk" type="checkbox" class="btn-check" name="btnradio" autocomplete="off"
+                  (click)="checkValue($event)" [(ngModel)]="item.isSelected" (checked)="item.isSelected">
+                <label class="btn btn-outline-dark" for="btnTavuk">Tavuk</label>
+
+              </div>
+
+              <div *ngIf="item.value=='Köfte'">
+
+                <input id="btnKofte" type="checkbox" class="btn-check" name="btnradio" autocomplete="off"
+                  (click)="checkValue($event)" [(ngModel)]="item.isSelected" (checked)="item.isSelected">
+                <label class="btn btn-outline-dark" for="btnKofte">Köfte</label>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div id="pisirmeDereceleri" class="mt-5" style="display:none">
+
+          <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
+              (checked)="azPismisToggle">
+            <label class="btn btn-outline-success" for="btnradio3" (click)="pisirmeDerecesi(azPismis)">Az Pişmiş</label>
+
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off"
+              (checked)="ortaPismisToggle">
+            <label class="btn btn-outline-primary" for="btnradio4" (click)="pisirmeDerecesi(ortaPismis)">Orta
+              Pişmiş</label>
+
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio5" autocomplete="off"
+              (checked)="cokPismisToggle">
+            <label class="btn btn-outline-danger" for="btnradio5" (click)="pisirmeDerecesi(cokPismis)">Çok
+              Pişmiş</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-md-12 text-center">
+
+      <div class="m-2 ">
+        <code id="json"></code><br>
+        <code id="orderList.length"></code><br>
+        <code id="warning"></code>
+      </div>
+
+      <div id="informationText" class="overflow-auto text-muted m-3"> </div>
+
+      <div class="btn-group" role="group" aria-label="">
+        <button id="siparisOlustur" (click)="siparisAl()" type="button" class="btn btn-outline-primary"
+          data-bs-toggle="modal" data-bs-target="#siparisOlusturModal" [disabled]="siparisAlButtonIsToggle">
+
+          <div *ngIf="!siparisAlButtonIsToggle ">
+            <div *ngIf="siparisAlindiMi && !siparisIptalEdildiMi">
+              Siparişiniz Oluşturuldu.
+            </div>
+            <div *ngIf="!siparisAlindiMi && !siparisIptalEdildiMi">
+              Sipariş Oluştur.
+            </div>
+          </div>
+          <div *ngIf="siparisAlButtonIsToggle && !siparisIptalEdildiMi && siparisAlindiMi">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Sipariş Oluşturuluyor.
+          </div>
+          <div *ngIf="siparisIptalEdildiMi">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Sipariş İptal Ediliyor.
+          </div>
+        </button>
+        <button id="stokListele" type="button" class="btn btn-outline-danger mx-1" (click)="stokSifirla()">Stoğu
+          Sıfırla</button>
+
+        <input type="checkbox" class="btn-check" id="btnStokListeleGizle" (click)="stoguListele()"
+          (checked)="stoguListeleToggle">
+        <label class="btn btn-outline-success mx-1" for="btnStokListeleGizle">
+          <span *ngIf="!stoguListeleToggle">
+            Stoğu Listele
+          </span>
+          <span *ngIf="stoguListeleToggle">
+            Stoğu Gizle
+          </span>
+        </label>
+
+      </div>
+    </div>
+    <div class="col-12 col-md-8 offset-md-2">
+      <div id="stokListesi" style="display: none" class="mt-3">
+        <h2 class="text-center text-primary">Malzeme Listesi</h2>
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between align-items-center"
+            *ngFor="let item of productList">
+            <label for="{{item.value}}">{{item.value}}</label>
+
+            <span *ngIf="item.stockQuantity>0">
+              <span class="badge text-bg-success m-1" #elseBlock>{{item.stockQuantity}}</span>
+            </span>
+
+            <span *ngIf="item.stockQuantity<=0">
+              <div class="bg-danger rounded-circle">
+                <span class="badge text-bg-danger m-1" #elseBlock>{{item.stockQuantity}}</span>
+              </div>
+            </span>
+
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="siparisOlusturModal" tabindex="-1" aria-labelledby="siparisOlusturModal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">
+          Siparişi onaylıyor musunuz
+        </h1>
+        <button type="button" class="btn-close" (click)="siparisIptalEdildi()" data-bs-dismiss="modal"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-outline-success" (click)="siparisOnaylandi()"
+          data-bs-dismiss="modal">Onayla
+        </button>
+        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"
+          (click)="siparisIptalEdildi()">Vazgeç
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>
